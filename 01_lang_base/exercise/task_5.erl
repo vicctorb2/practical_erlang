@@ -7,7 +7,8 @@
 
 %% get 3 float numbers from binary
 get_floats(Bin) ->
-    {0.0, 0.0, 0.0}.
+    <<F1/float, F2/float, F3/float>> = Bin,
+    {F1,F2,F3}.
 
 get_floats_test() ->
     ?assertEqual({1.0, 2.5, 100.500},
