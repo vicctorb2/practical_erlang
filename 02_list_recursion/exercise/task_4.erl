@@ -7,8 +7,20 @@
 
 %% implement lists:dropwhile/2
 %% http://www.erlang.org/doc/man/lists.html#dropwhile-2
-dropwhile(Pred, List) ->
-    List.
+dropwhile(Pred,List) -> dropwhile(Pred,List,[],false).
+
+dropwhile(Pred,[],Acc,_) -> task_2:reverse(Acc); %using our task2 module to reverse
+dropwhile(Pred, List, Acc, FoundedFlag) ->  
+    [Head | Tail] = List,
+    if
+        FoundedFlag ->                              %this flag signals that the first non-predicate element was found
+            dropwhile(Pred,Tail,[Head | Acc],true); 
+        true ->
+            case Pred(Head) of                      
+                true -> dropwhile(Pred,Tail,Acc,false);  %%founded by predicate -> skip this element  
+                false -> dropwhile(Pred, Tail, [Head | Acc],true) %%not founded -> add it to Acc, go to next element 
+            end
+    end.
 
 
 dropwhile_test() ->
@@ -24,8 +36,21 @@ dropwhile_test() ->
 
 %% implement lists:takewhile/2
 %% http://www.erlang.org/doc/man/lists.html#takewhile-2
-takewhile(Pred, List) ->
-    List.
+takewhile(Pred, List) -> 
+    if
+        List/=[] ->
+            takewhile(Pred, List, []);
+        true -> 
+            [] 
+    end.
+
+
+takewhile(Pred, List, Acc) ->
+    [Head | Tail] = List,
+    case Pred(Head) of
+        true -> takewhile(Pred, Tail, [Head | Acc]);
+        false -> task_2:reverse(Acc)
+    end.
 
 
 takewhile_test() ->
