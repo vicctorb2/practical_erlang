@@ -7,8 +7,15 @@
 
 %% implement lists:member/2
 %% http://www.erlang.org/doc/man/lists.html#member-2
+member(Elem,[]) -> false;
 member(Elem, List) ->
-    false.
+    [CurrentElem | Tail] = List,
+    if
+        CurrentElem == Elem -> 
+            true;
+        true -> 
+            member(Elem,Tail)
+    end.
 
 
 member_test() ->
@@ -22,8 +29,15 @@ member_test() ->
 
 %% implement lists:filter/2
 %% http://www.erlang.org/doc/man/lists.html#filter-2
-filter(Pred, List) ->
-    List.
+filter(Pred,List) -> filter(Pred, List, []).
+
+filter(Pred,[],Acc) -> task_2:reverse(Acc); %using our task_2 module, must be compiled
+filter(Pred, List, Acc) ->
+    [Head | Tail] = List,
+    case Pred(Head) of
+        true -> filter(Pred, Tail, [Head | Acc]);
+        false -> filter(Pred, Tail, Acc)
+    end.
 
 
 filter_test() ->
