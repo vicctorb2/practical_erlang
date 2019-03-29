@@ -58,9 +58,19 @@ sample_champ() ->
       ]}
     ].
 
-
 get_stat(Champ) ->
-    {0, 0, 0.0, 0.9}.
+    {NumTeams, NumPlayers, TotalAge, TotalRating} = lists:foldl(fun teams_fold_func/2,{0,0,0,0},Champ),
+    {NumTeams, NumPlayers, TotalAge/NumPlayers, TotalRating/NumPlayers}.
+
+%func for folding inside of Teams of the Champ
+teams_fold_func({team, _, Players}, {NumTeams, NumPlayers, TotalAge, TotalRating}) -> 
+    %% folding function goes inside of Players list of the Team 
+    lists:foldl(fun players_fold_func/2, {NumTeams+1, NumPlayers, TotalAge, TotalRating}, Players).
+
+%func for folding inside of Players of the Team
+players_fold_func({player, _, Age, Rating, _},{_NumTeams,NumPlayers,TotalAge,TotalRating}) -> 
+    {_NumTeams,NumPlayers+1,TotalAge+Age,TotalRating+Rating}.
+
 
 
 get_stat_test() ->
