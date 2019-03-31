@@ -79,7 +79,19 @@ get_stat_test() ->
 
 
 filter_sick_players(Champ) ->
-    Champ.
+    WithoutSickPlayers = lists:map(fun only_strong_teams/1, Champ), %returns new champ teams without sick players
+    lists:filter(fun delete_sick_teams/1, WithoutSickPlayers). %finally removes sick teams (<5 players) from champ.
+
+only_strong_teams({team,_TeamName,Players}) ->
+    StrongPLayers = lists:filter(fun only_strong_players/1, Players),
+    {team, _TeamName, StrongPLayers}.
+
+%filteres sick players of team
+only_strong_players({player, _Name, _Age, _Rating, Health}) -> Health>=50.
+
+%filteres teams without enought players count
+delete_sick_teams({team,_,Players}) -> length(Players) >= 5.
+
 
 
 filter_sick_players_test() ->
