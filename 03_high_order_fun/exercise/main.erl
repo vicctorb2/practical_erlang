@@ -127,7 +127,9 @@ filter_sick_players_test() ->
 
 
 make_pairs(Team1, Team2) ->
-    [].
+    {team, _TeamName1, Players1} = Team1,
+    {team, _TeamName2, Players2} = Team2,
+    [{PlayerName1, PlayerName2} || {player, PlayerName1, _, Rating1, _} <- Players1, {player, PlayerName2, _, Rating2, _} <- Players2, Rating1 + Rating2 > 600].
 
 
 make_pairs_test() ->
