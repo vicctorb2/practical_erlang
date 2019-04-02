@@ -1,6 +1,11 @@
 -module(extra_task).
 
--export([criteria_func_gender/1, criteria_func_age/1, get_users/0, group_by/2]).
+-export([
+	get_users/0,
+	group_by_gender/1,
+	criteria_func_gender/1,
+	criteria_func_age/1,
+	group_by/2]).
 
 
 get_users() ->
@@ -14,6 +19,26 @@ get_users() ->
  		{user, "Ann", 3, female}
 	].
 
+
+%--------------Task 1 --------------------------------
+
+group_by_gender(Users) ->
+	Map = lists:foldr(
+		fun(User, Map) ->
+			{user, _, _, Gender} = User,
+			Males = maps:get(male,Map),
+			Females = maps:get(female,Map),
+			case Gender of
+				male -> maps:update(male, [User | Males], Map);
+				female -> maps:update(female, [User | Females], Map)
+			end
+		end,
+		#{male => [], female => []},
+		Users),
+	Map.
+
+
+%--------------Task 2 --------------------------------
 
 criteria_func_gender(User) ->
 	{user, _, _, Gender} = User,
@@ -41,4 +66,3 @@ group_by(CriteriaFun, Users) ->
 		end,
 		#{},
 		Users).
-
