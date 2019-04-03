@@ -61,7 +61,7 @@ group_by(CriteriaFun, Users) ->
 			CurrCategory = CriteriaFun(User),
 			case maps:find(CurrCategory,MapAcc) of 
 				error -> maps:put(CurrCategory, [User], MapAcc);
-				{ok,_} -> maps:put(CurrCategory,[User | maps:get(CurrCategory,MapAcc)], MapAcc)
+				{ok,CurrValues} -> maps:put(CurrCategory,[User | CurrValues], MapAcc)
 			end
 		end,
 		#{},
