@@ -50,14 +50,17 @@ get_idea(Id) ->
 
 
 ideas_by_author(Author) ->
-  MS = ets:fun2ms(fun(#idea{author = AuthorValue} = CurrIdea)
-                        when AuthorValue == Author -> CurrIdea
+  MS = ets:fun2ms(fun(#idea{author = CurrAuthorValue} = CurrIdea)
+                        when CurrAuthorValue == Author -> CurrIdea
                   end),
   ets:select(great_ideas_table, MS).
 
 
 ideas_by_rating(Rating) ->
-    [].
+  MS = ets:fun2ms(fun(#idea{rating = CurrRatingVal} = CurrIdea)
+                        when CurrRatingVal >= Rating -> CurrIdea
+                  end),
+  ets:select(great_ideas_table,MS).
 
 
 get_authors() ->
