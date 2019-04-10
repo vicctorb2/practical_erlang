@@ -64,4 +64,22 @@ ideas_by_rating(Rating) ->
 
 
 get_authors() ->
-    [].
+  MS = ets:fun2ms(fun ({idea, _,_, Author, _, _}) -> Author end),
+  Authors = ets:select(great_ideas_table, MS),
+  
+  Map = lists:foldl(
+      fun(Author, MapAcc) ->
+        case maps:find(Author, MapAcc) of
+          {ok, IdeasCount} -> maps:put(Author, IdeasCount + 1, MapAcc);
+          error -> maps:put(Author, 1, MapAcc)
+        end
+      end,
+      maps:new(),
+      Authors),
+
+  IdeasCountList = maps:fold(fun(K, V, Acc) -> [{K,V} | Acc] end, [], Map),
+  lists:sort(fun({Author1, SameCount}, {Author2, SameCount}) -> Author2 > Author1;
+                ({_, IdeasCount1},{_, IdeasCount2}) -> IdeasCount1 > IdeasCount2
+             end,
+            IdeasCountList).
+
