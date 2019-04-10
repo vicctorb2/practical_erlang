@@ -11,7 +11,19 @@ init() ->
     {In, Data}.
 
 parse(Str, Data) when is_binary(Str) ->
-	Keys = maps:fold(fun(K, _V, Acc) -> [K | Acc] end, [], Data),
-	Values = maps:fold(fun(_K, V, Acc) -> [V | Acc] end, [], Data),
-	binary:replace(In, <<"{{" ++ [K | KeysRest] = Keys} ++ "}}">>, << [Value | ValueRest] = Values).
+	SplittedList = binary:split(Str, [<<"{{">>], [global]),
+	ListWithReplaced = lists:map(
+		fun(SplittedVal) ->
+			case binary:split(SplittedVal, [<<"}}">>]) of
+				 [WithoutParam] -> WithoutParam;
+				 [Param | Rest] -> 
+				 	case maps:find(Param, Data) of
+				 		error -> Rest;
+				 		{ok, Value} when is_binary(Value) orelse is_list(Value) -> [Value, Rest];
+				 		{ok, Value} when is_integer(Value) -> [integer_to_binary(Value), Rest]
+				 	end
+			end
+		end,
+		SplittedList),
+	unicode:characters_to_binary(ListWithReplaced).
 
