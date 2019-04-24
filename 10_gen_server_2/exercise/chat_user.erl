@@ -27,7 +27,7 @@ handle_cast({add_message, {Author, Message}}, #state{messages  = CurrMessages} =
     {noreply, NewState}.
 
 handle_call(get_messages, _From, #state{messages = CurrMessages} = State) ->
-    {reply, CurrMessages, State}.
+    {reply, lists:reverse(CurrMessages), State}.
 
 init([]) ->
     {ok, #state{}}.
